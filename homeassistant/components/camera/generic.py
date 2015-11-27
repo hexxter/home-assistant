@@ -3,43 +3,8 @@ homeassistant.components.camera.generic
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Support for IP Cameras.
 
-This component provides basic support for IP cameras. For the basic support to
-work you camera must support accessing a JPEG snapshot via a URL and you will
-need to specify the "still_image_url" parameter which should be the location of
-the JPEG image.
-
-As part of the basic support the following features will be provided:
-- MJPEG video streaming
-- Saving a snapshot
-- Recording(JPEG frame capture)
-
-To use this component, add the following to your configuration.yaml file.
-
-camera:
-    platform: generic
-    name: Door Camera
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    still_image_url: http://YOUR_CAMERA_IP_AND_PORT/image.jpg
-
-Variables:
-
-still_image_url
-*Required
-The URL your camera serves the image on, eg. http://192.168.1.21:2112/
-
-name
-*Optional
-This parameter allows you to override the name of your camera in Home
-Assistant.
-
-username
-*Optional
-The username for accessing your camera.
-
-password
-*Optional
-The password for accessing your camera.
+For more details about this platform, please refer to the documentation at
+https://home-assistant.io/components/camera.generic/
 """
 import logging
 from requests.auth import HTTPBasicAuth
@@ -77,11 +42,19 @@ class GenericCamera(Camera):
     def camera_image(self):
         """ Return a still image reponse from the camera. """
         if self._username and self._password:
-            response = requests.get(
-                self._still_image_url,
-                auth=HTTPBasicAuth(self._username, self._password))
+            try:
+                response = requests.get(
+                    self._still_image_url,
+                    auth=HTTPBasicAuth(self._username, self._password))
+            except requests.exceptions.RequestException as error:
+                _LOGGER.error('Error getting camera image: %s', error)
+                return None
         else:
-            response = requests.get(self._still_image_url)
+            try:
+                response = requests.get(self._still_image_url)
+            except requests.exceptions.RequestException as error:
+                _LOGGER.error('Error getting camera image: %s', error)
+                return None
 
         return response.content
 

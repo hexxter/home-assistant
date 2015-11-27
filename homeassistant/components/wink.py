@@ -3,20 +3,8 @@ homeassistant.components.wink
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Connects to a Wink hub and loads relevant components to control its devices.
 
-Configuration:
-
-To use the Wink component you will need to add something like the following
-to your configuration.yaml file.
-
-wink:
-  access_token: YOUR_ACCESS_TOKEN
-
-Variables:
-
-access_token
-*Required
-Please check https://home-assistant.io/components/wink.html for further
-details.
+For more details about this component, please refer to the documentation at
+https://home-assistant.io/components/wink/
 """
 import logging
 
@@ -31,8 +19,8 @@ from homeassistant.const import (
 DOMAIN = "wink"
 DEPENDENCIES = []
 REQUIREMENTS = ['https://github.com/balloob/python-wink/archive/'
-                'c2b700e8ca866159566ecf5e644d9c297f69f257.zip'
-                '#python-wink==0.1']
+                '9eb39eaba0717922815e673ad1114c685839d890.zip'
+                '#python-wink==0.1.1']
 
 DISCOVER_LIGHTS = "wink.lights"
 DISCOVER_SWITCHES = "wink.switches"
@@ -71,7 +59,7 @@ def setup(hass, config):
 
 
 class WinkToggleDevice(ToggleEntity):
-    """ Represents a Wink switch within Home Assistant. """
+    """ Represents a Wink toogle (switch) device. """
 
     def __init__(self, wink):
         self.wink = wink

@@ -1,7 +1,10 @@
 """
 homeassistant.components.sensor.verisure
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Interfaces with Verisure sensors.
+
+For more details about this platform, please refer to the documentation at
+documentation at https://home-assistant.io/components/verisure/
 """
 import logging
 

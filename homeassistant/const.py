@@ -1,7 +1,7 @@
 # coding: utf-8
 """ Constants used by Home Assistant components. """
 
-__version__ = "0.7.5"
+__version__ = "0.8.0"
 
 # Can be used to specify a catch all when registering state or event listeners.
 MATCH_ALL = '*'
@@ -51,6 +51,8 @@ STATE_STANDBY = 'standby'
 STATE_ALARM_DISARMED = 'disarmed'
 STATE_ALARM_ARMED_HOME = 'armed_home'
 STATE_ALARM_ARMED_AWAY = 'armed_away'
+STATE_ALARM_PENDING = 'pending'
+STATE_ALARM_TRIGGERED = 'triggered'
 
 # #### STATE AND EVENT ATTRIBUTES ####
 # Contains current time for a TIME_CHANGED event
@@ -71,6 +73,9 @@ ATTR_FRIENDLY_NAME = "friendly_name"
 
 # A picture to represent entity
 ATTR_ENTITY_PICTURE = "entity_picture"
+
+# Icon to use in the frontend
+ATTR_ICON = "icon"
 
 # The unit of measurement if applicable
 ATTR_UNIT_OF_MEASUREMENT = "unit_of_measurement"
@@ -128,6 +133,7 @@ SERVICE_MEDIA_SEEK = "media_seek"
 SERVICE_ALARM_DISARM = "alarm_disarm"
 SERVICE_ALARM_ARM_HOME = "alarm_arm_home"
 SERVICE_ALARM_ARM_AWAY = "alarm_arm_away"
+SERVICE_ALARM_TRIGGER = "alarm_trigger"
 
 # #### API / REMOTE ####
 SERVER_PORT = 8123
@@ -145,6 +151,7 @@ URL_API_SERVICES_SERVICE = "/api/services/{}/{}"
 URL_API_EVENT_FORWARD = "/api/event_forwarding"
 URL_API_COMPONENTS = "/api/components"
 URL_API_BOOTSTRAP = "/api/bootstrap"
+URL_API_ERROR_LOG = "/api/error_log"
 
 HTTP_OK = 200
 HTTP_CREATED = 201
@@ -154,6 +161,7 @@ HTTP_UNAUTHORIZED = 401
 HTTP_NOT_FOUND = 404
 HTTP_METHOD_NOT_ALLOWED = 405
 HTTP_UNPROCESSABLE_ENTITY = 422
+HTTP_INTERNAL_SERVER_ERROR = 500
 
 HTTP_HEADER_HA_AUTH = "X-HA-access"
 HTTP_HEADER_ACCEPT_ENCODING = "Accept-Encoding"
@@ -166,3 +174,4 @@ HTTP_HEADER_EXPIRES = "Expires"
 
 CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_MULTIPART = 'multipart/x-mixed-replace; boundary={}'
+CONTENT_TYPE_TEXT_PLAIN = 'text/plain'

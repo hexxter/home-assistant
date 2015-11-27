@@ -3,54 +3,8 @@ homeassistant.components.notify.smtp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Mail (SMTP) notification service.
 
-Configuration:
-
-To use the smtp notifier you will need to add something like the following
-to your configuration.yaml file.
-
-notify:
-  platform: smtp
-  server: MAIL_SERVER
-  port: YOUR_SMTP_PORT
-  sender: SENDER_EMAIL_ADDRESS
-  starttls: 1 or 0
-  username: YOUR_SMTP_USERNAME
-  password: YOUR_SMTP_PASSWORD
-  recipient: YOUR_RECIPIENT
-
-Variables:
-
-server
-*Required
-SMTP server which is used to end the notifications. For Google Mail, eg.
-smtp.gmail.com. Keep in mind that Google has some extra layers of protection
-which need special attention (Hint: 'Less secure apps').
-
-port
-*Required
-The port that the SMTP server is using, eg. 587 for Google Mail and STARTTLS
-or 465/993 depending on your SMTP servers.
-
-sender
-*Required
-E-Mail address of the sender.
-
-starttls
-*Optional
-Enables STARTTLS, eg. 1 or 0.
-
-username
-*Required
-Username for the SMTP account.
-
-password
-*Required
-Password for the SMTP server that belongs to the given username. If the
-password contains a colon it need to be wrapped in apostrophes.
-
-recipient
-*Required
-Recipient of the notification.
+For more details about this platform, please refer to the documentation at
+https://home-assistant.io/components/notify.smtp/
 """
 import logging
 import smtplib
@@ -66,35 +20,31 @@ _LOGGER = logging.getLogger(__name__)
 def get_service(hass, config):
     """ Get the mail notification service. """
 
-    if not validate_config(config,
-                           {DOMAIN: ['server',
-                                     'port',
-                                     'sender',
-                                     'username',
-                                     'password',
-                                     'recipient']},
+    if not validate_config({DOMAIN: config},
+                           {DOMAIN: ['server', 'port', 'sender', 'username',
+                                     'password', 'recipient']},
                            _LOGGER):
         return None
 
-    smtp_server = config[DOMAIN]['server']
-    port = int(config[DOMAIN]['port'])
-    username = config[DOMAIN]['username']
-    password = config[DOMAIN]['password']
+    smtp_server = config['server']
+    port = int(config['port'])
+    username = config['username']
+    password = config['password']
+    starttls = int(config['starttls'])
 
     server = None
     try:
         server = smtplib.SMTP(smtp_server, port)
         server.ehlo()
-        if int(config[DOMAIN]['starttls']) == 1:
+        if starttls == 1:
             server.starttls()
             server.ehlo()
 
         try:
             server.login(username, password)
 
-        except (smtplib.SMTPException, smtplib.SMTPSenderRefused) as error:
-            _LOGGER.exception(error,
-                              "Please check your settings.")
+        except (smtplib.SMTPException, smtplib.SMTPSenderRefused):
+            _LOGGER.exception("Please check your settings.")
 
             return None
 
@@ -112,18 +62,13 @@ def get_service(hass, config):
 
         return None
 
-    if server:
-        server.quit()
+    finally:
+        if server:
+            server.quit()
 
     return MailNotificationService(
-        config[DOMAIN]['server'],
-        config[DOMAIN]['port'],
-        config[DOMAIN]['sender'],
-        config[DOMAIN]['starttls'],
-        config[DOMAIN]['username'],
-        config[DOMAIN]['password'],
-        config[DOMAIN]['recipient']
-        )
+        smtp_server, port, config['sender'], starttls, username, password,
+        config['recipient'])
 
 
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
@@ -136,7 +81,7 @@ class MailNotificationService(BaseNotificationService):
         self._server = server
         self._port = port
         self._sender = sender
-        self.starttls = int(starttls)
+        self.starttls = starttls
         self.username = username
         self.password = password
         self.recipient = recipient

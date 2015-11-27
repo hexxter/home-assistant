@@ -17,7 +17,7 @@ import functools as ft
 from collections import namedtuple
 
 from homeassistant.const import (
-    EVENT_HOMEASSISTANT_START, EVENT_HOMEASSISTANT_STOP,
+    __version__, EVENT_HOMEASSISTANT_START, EVENT_HOMEASSISTANT_STOP,
     SERVICE_HOMEASSISTANT_STOP, EVENT_TIME_CHANGED, EVENT_STATE_CHANGED,
     EVENT_CALL_SERVICE, ATTR_NOW, ATTR_DOMAIN, ATTR_SERVICE, MATCH_ALL,
     EVENT_SERVICE_EXECUTED, ATTR_SERVICE_CALL_ID, EVENT_SERVICE_REGISTERED,
@@ -84,7 +84,7 @@ class HomeAssistant(object):
 
         if os.name != "nt":
             try:
-                signal.signal(signal.SIGQUIT, stop_homeassistant)
+                signal.signal(signal.SIGTERM, stop_homeassistant)
             except ValueError:
                 _LOGGER.warning(
                     'Could not bind to SIGQUIT. Are you running in a thread?')
@@ -741,6 +741,7 @@ class Config(object):
             'location_name': self.location_name,
             'time_zone': time_zone.zone,
             'components': self.components,
+            'version': __version__
         }
 
 

@@ -2,6 +2,9 @@
 homeassistant.components.alarm_control_panel.verisure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Interfaces with Verisure alarm control panel.
+
+For more details about this platform, please refer to the documentation at
+https://home-assistant.io/components/verisure/
 """
 import logging
 
@@ -33,6 +36,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     add_devices(alarms)
 
 
+# pylint: disable=abstract-method
 class VerisureAlarm(alarm.AlarmControlPanel):
     """ Represents a Verisure alarm status. """
 
