@@ -39,7 +39,7 @@ blinkstick==1.1.7
 phue==0.8
 
 # homeassistant.components.light.limitlessled
-ledcontroller==1.1.0
+limitlessled==1.0.0
 
 # homeassistant.components.light.tellstick
 # homeassistant.components.sensor.tellstick
@@ -151,7 +151,7 @@ https://github.com/rkabadi/pyedimax/archive/365301ce3ff26129a7910c501ead09ea625f
 hikvision==0.4
 
 # homeassistant.components.switch.orvibo
-orvibo==1.0.0
+orvibo==1.0.1
 
 # homeassistant.components.switch.wemo
 pywemo==0.3.3
@@ -170,4 +170,3 @@ https://github.com/persandstrom/python-verisure/archive/9873c4527f01b1ba1f72ae60
 
 # homeassistant.components.zwave
 pydispatcher==2.0.5
-
