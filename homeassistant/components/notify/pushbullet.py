@@ -1,6 +1,4 @@
 """
-homeassistant.components.notify.pushbullet
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PushBullet platform for notify component.
 
 For more details about this platform, please refer to the documentation at
@@ -8,23 +6,28 @@ https://home-assistant.io/components/notify.pushbullet/
 """
 import logging
 
+import voluptuous as vol
+
 from homeassistant.components.notify import (
-    ATTR_TITLE, ATTR_TARGET, BaseNotificationService)
+    ATTR_TARGET, ATTR_TITLE, ATTR_TITLE_DEFAULT, PLATFORM_SCHEMA,
+    BaseNotificationService)
 from homeassistant.const import CONF_API_KEY
+import homeassistant.helpers.config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
-REQUIREMENTS = ['pushbullet.py==0.9.0']
+REQUIREMENTS = ['pushbullet.py==0.10.0']
+
+
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Required(CONF_API_KEY): cv.string,
+})
 
 
 # pylint: disable=unused-argument
 def get_service(hass, config):
-    """ Get the PushBullet notification service. """
+    """Get the PushBullet notification service."""
     from pushbullet import PushBullet
     from pushbullet import InvalidKeyError
-
-    if CONF_API_KEY not in config:
-        _LOGGER.error("Unable to find config key '%s'", CONF_API_KEY)
-        return None
 
     try:
         pushbullet = PushBullet(config[CONF_API_KEY])
@@ -39,16 +42,16 @@ def get_service(hass, config):
 
 # pylint: disable=too-few-public-methods
 class PushBulletNotificationService(BaseNotificationService):
-    """ Implements notification service for Pushbullet. """
+    """Implement the notification service for Pushbullet."""
 
     def __init__(self, pb):
+        """Initialize the service."""
         self.pushbullet = pb
         self.pbtargets = {}
         self.refresh()
 
     def refresh(self):
-        """
-        Refresh devices, contacts, etc
+        """Refresh devices, contacts, etc.
 
         pbtargets stores all targets available from this pushbullet instance
         into a dict. These are PB objects!. It sacrifices a bit of memory
@@ -67,15 +70,15 @@ class PushBulletNotificationService(BaseNotificationService):
         }
 
     def send_message(self, message=None, **kwargs):
-        """
-        Send a message to a specified target.
+        """Send a message to a specified target.
+
         If no target specified, a 'normal' push will be sent to all devices
         linked to the PB account.
         Email is special, these are assumed to always exist. We use a special
         call which doesn't require a push object.
         """
         targets = kwargs.get(ATTR_TARGET)
-        title = kwargs.get(ATTR_TITLE)
+        title = kwargs.get(ATTR_TITLE, ATTR_TITLE_DEFAULT)
         refreshed = False
 
         if not targets:
@@ -83,10 +86,6 @@ class PushBulletNotificationService(BaseNotificationService):
             self.pushbullet.push_note(title, message)
             _LOGGER.info('Sent notification to self')
             return
-
-        # Make list if not so
-        if not isinstance(targets, list):
-            targets = [targets]
 
         # Main loop, Process all targets specified
         for target in targets:
